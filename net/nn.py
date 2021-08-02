@@ -149,7 +149,7 @@ def spp_fn(x, rates=(6, 12, 18)):
 
 def build_model(shape=(256, 256, 3), classes=4):
     inputs = layers.Input(shape=shape)
-    print(shape)
+    
     features, _ = backbone(inputs)
 
     x = spp_fn(features[-2])
@@ -177,25 +177,10 @@ def segmentation_loss(class_weights):
     class_weights = tf.cast(tf.constant(class_weights), tf.float32)
     
     def weighted_cross_entropy(y_true, y_pred):
-        import keras.backend as KB
-        
-#         y_true = KB.one_hot(tf.cast(KB.flatten(y_true), tf.int32),
-#                             KB.int_shape(y_pred)[-1]+1)
-#         unpacked = tf.unstack(y_true, axis=-1)
-#         print(unpacked)
-#         y_true = tf.stack(unpacked[:-1], axis=-1)
-#         y_true = tf.reshape(y_true, [12,256,256])
-        y_true= tf.reduce_max(tf.one_hot(y_true,4), axis=3)
-        #print(y_true.ref().deref())
-#         print(y_true[0,0,0,:].numpy().tolist())
-#         print(y_true[0,:,:,:])
-#         print(tf.reshape(y_true[0,:,:,:],[65536,3]))
-#         print(tf.one_hot(tf.reshape(y_true[0,:,:,:],[65536,3]), 4, axis=1))
-#         print(tf.reduce_max(tf.one_hot(tf.reshape(y_true[0,:,:,:],[65536,3]), 4), axis=0))
+
         weights = y_true * class_weights
-        #print(weights)
-        weights = tf.reduce_sum(weights, axis=3)#
+        weights = tf.reduce_sum(weights, axis=3)
         
-        return tf.nn.softmax_cross_entropy_with_logits(y_true, y_pred)#, weights=weights)
+        return tf.compat.v1.losses.softmax_cross_entropy(y_true, y_pred, weights=weights)
 
     return weighted_cross_entropy
