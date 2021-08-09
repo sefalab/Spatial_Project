@@ -102,3 +102,11 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Machine learning
+.h5
+.tfrecord
+results/
+weights/
+DeepLab-tf/results
+DeepLab-tf/weights
