@@ -110,3 +110,5 @@ results/
 weights/
 DeepLab-tf/results
 DeepLab-tf/weights
+utils/config.py
+*config.py
