@@ -10,13 +10,13 @@ import numpy as np
 from utils import config
 
 
-def load_image(file_name):
-    path = os.path.join(config.data_dir, config.image_dir, file_name + '.png')
+def load_image(path):
+#     path = os.path.join(config.data_dir, config.image_dir, file_name + '.png')
     return cv2.cvtColor(cv2.imread(path, -1), cv2.COLOR_BGR2RGB)
 
 
-def load_label(file_name):
-    path = os.path.join(config.data_dir, config.label_dir, file_name + '_L.png')
+def load_label(path):
+#     path = os.path.join(config.data_dir, config.label_dir, file_name + '_L.png')
     return cv2.cvtColor(cv2.imread(path, -1), cv2.COLOR_BGR2RGB)
 
 

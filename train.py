@@ -31,8 +31,8 @@ def model_n(prov):
     _, palette = util.get_label_info(config.class_dict)
 
     #Load file_names from Json
-    path = 
-    with open(config.file_names, 'r') as JSON:
+
+    with open(config.data_splits, 'r') as JSON:
         json_dict_file_names = json.load(JSON)
     file_names =json_dict_file_names[prov][1]
     
@@ -62,7 +62,7 @@ def model_n(prov):
 #    dataset = util.get_dataset(TRAINING_FILENAMES, False)
     valid_dataset = util.get_dataset(VALID_FILENAMES, False)
     cluster_resolver = tf.distribute.cluster_resolver.TPUClusterResolver(
-        tpu=tpu_)
+        tpu = prov.lower())
     tf.config.experimental_connect_to_cluster(cluster_resolver)
     tf.tpu.experimental.initialize_tpu_system(cluster_resolver)
     strategy = tf.distribute.TPUStrategy(cluster_resolver)
