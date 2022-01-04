@@ -106,9 +106,9 @@ venv.bak/
 # Machine learning
 .h5
 .tfrecord
-results/
-weights/
-DeepLab-tf/results
-DeepLab-tf/weights
+*results/
+*weights/
+*DeepLab-tf/results
+*DeepLab-tf/weights
 utils/config.py
 *config.py
