@@ -1,7 +1,5 @@
 import rasterio
 from utils import config
-
-
 import multiprocessing
 import cv2
 import numpy as np
@@ -14,10 +12,10 @@ from osgeo import gdal, osr, ogr
 from PIL import Image
 
 
-
 def in_polygon(raster,vector):
     ''''
-    Check if polygon and georeferenced satellite image overlap
+    Check if polygon and georeferenced satellite image 
+    overlap
     
     # Arguments
         raster_path: path to the satellite image
@@ -75,10 +73,12 @@ def tif_to_png(tif_path,png_path):
 
 def color_4(val):
     ''''
-    Create masks: pixel color references per class for the 4 class category
+    Create masks: pixel color references per class for 
+    the 4 class category
     
     # Arguments
-        val: String representing what the label of the pixel should be
+        val: String representing what the label of the 
+        pixel should be
         
     # Return
         The RGB Value corresponding to the string
@@ -125,10 +125,12 @@ def color_4(val):
     
 def color_12(val):
     ''''
-    Create masks: pixel color references per class for the 12 class category
+    Create masks: pixel color references per class for 
+    the 12 class category
     
     # Arguments
-        val: String representing what the label of the pixel should be
+        val: String representing what the label of the 
+        pixel should be
         
     # Return
         The RGB Value corresponding to the string
@@ -174,8 +176,18 @@ def color_12(val):
         return [255,255,255]    
 
 def splt_shp_file(src,shp_folder):
-    ##split shapefile
-
+    ''''
+    Split shapefile to make each row an individual 
+    file
+    
+    # Arguments
+        src: the source shapefile with multiple rows
+        shp_folder: path to store the individual 
+        shapefiles
+    # 
+        
+    ''''    
+    
     if not os.path.exists(shp_folder):
     os.makedirs(shp_folder)
     
@@ -186,25 +198,48 @@ def splt_shp_file(src,shp_folder):
         print(source[0]['properties']['EA_TYPE'])
         for f in source:
 
-            outfile = os.path.join(shp_folder, str(id_)+ "__%s.shp" % f['properties']['EA_TYPE'].replace(' ','_'))
+            outfile = os.path.join(shp_folder, 
+            str(id_)+ "__%s.shp" % f['properties']
+            ['EA_TYPE'].replace(' ','_'))
             id_ = id_+1
-            with fiona.open(outfile, 'w', **meta) as sink:
+            with fiona.open(outfile, 'w', **meta) 
+            as sink:
 
                 sink.write(f) 
 
 def create_empty_png(im_size,dst):
+    ''''
+    create emptpy pngs
+    
+    # Arguments
+        im_size: image size (n x n)
+        dst: path to store the pngs
+    # 
+        
+    ''''   
    
     Image.MAX_IMAGE_PIXELS = None
-    img = Image.new('RGB', (im_size,im_size), (255, 255, 255))
+    img = Image.new('RGB', (im_size,im_size), 
+                    (255, 255, 255))
     
     if not os.path.exists(dst):
         img.save(dst, "PNG")
         
         
 def create_mask(in_image,blank_png,color):
+    ''''
+    create emptpy pngs
+    
+    # Arguments
+        im_size: image size (n x n)
+        dst: path to store the pngs
+    # 
+        
+    ''''       
     for i in range(in_image.shape[0]):
         for j in range(in_image.shape[1]):
-            if in_image[i,j,0] >0 and in_image[i,j,1] >0 and in_image[i,j,2] >0:
+            if in_image[i,j,0] >0 and in_image[i,j,1] >0 and 
+            in_image[i,j,2] >0:
                 blank_png[i,j] = color
     return blank_png
 
@@ -213,8 +248,9 @@ def create_mask(in_image,blank_png,color):
 def png_to_geotif(ref_tif_path, input_png_path, output_tif_path):
     
     ''''
-    This function is for converting PNG files to Geotiff. The assumption is that there is a pre-existing 
-    satellite image that you want to copy metadata from to convert a pre-existsing PNG mask of that 
+    Convert PNG files to Geotiff. The assumption is that there is
+    a pre-existing satellite image that you want to copy metadata 
+    from to convert a pre-existsing PNG mask of that 
     satellite image into Geotiff format.
     
     # Arguments
@@ -222,9 +258,6 @@ def png_to_geotif(ref_tif_path, input_png_path, output_tif_path):
         input_png_path: PNG mask to be converted to Geotiff
         output_tif_path: output Geotiff mask
         
-    # Returns
-       
-    
     ''''
     
     ref_tif = rasterio.open(ref_tif_path)
@@ -233,7 +266,9 @@ def png_to_geotif(ref_tif_path, input_png_path, output_tif_path):
     input_png = rasterio.open(input_png_path, 'r')
     bands = [1, 2, 3]
     data = input_png.read(bands)
-    transform = rasterio.transform.from_bounds(west, south, east, north, data.shape[1], data.shape[2])
+    transform = rasterio.transform.from_bounds(west, south, east, 
+                                               north, data.shape[1],
+                                               data.shape[2])
     crs = config.crs
     with rasterio.open(output_file_path, 'w', driver='GTiff',
                        width=data.shape[1], height=data.shape[2],
