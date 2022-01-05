@@ -10,7 +10,9 @@ import os
 from rasterio.mask import mask
 from osgeo import gdal, osr, ogr
 from PIL import Image
+import glob
 
+Image.MAX_IMAGE_PIXELS = None 
 
 def in_polygon(raster,vector):
     ''''
@@ -275,3 +277,39 @@ def png_to_geotif(ref_tif_path, input_png_path, output_tif_path):
                        count=3, dtype=data.dtype, nodata=0,
                        transform=transform, crs=crs) as dst:
         dst.write(data, indexes=bands)
+        
+def tile_image(image_path):
+    ''''
+    Tile large image
+    
+    # Arguments
+        image_path: image path
+        chopsize: tile size
+    # 
+        
+    ''''  
+    chopsize = config.chopsize   
+    for filepath in glob.iglob(image_path):
+
+        tmp =filepath.split('/')[-1].split('.')[0]
+
+        infile = filepath
+
+        infile_= infile.split('/')[-1].split('.')[0]
+        img = Image.open(infile)
+        img_ = Image.open( config.base + config.image_path + infile_ + '.tif' )
+
+        width, height = img.size
+
+        # Save Chops of original image
+        for x0 in range(0, width, chopsize):
+            for y0 in range(0, height, chopsize):
+                box = (x0, y0,
+                     x0+chopsize if x0+chopsize < width else width - 1,
+                     y0+chopsize if y0+chopsize < height else height - 1)
+                if img.crop(box).size ==(256, 256):
+                   # print(img.crop(box).size)
+                    img_.crop(box).save(config.base_path+ config.tiled_image_path+
+                                        '%s___%03d_%03d.png' % (infile_, x0, y0))
+                    img.crop(box).save(config.base_path+ config.tiled_mask_path+
+                                       '%s___%03d_%03d.png' % (infile_, x0, y0))
